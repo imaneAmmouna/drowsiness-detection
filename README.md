@@ -114,24 +114,14 @@ Le système permet de détecter la somnolence **en temps réel** à partir d’u
 
 ### Exemple d’images de détection
 
-<div style="display: flex; justify-content: space-around; align-items: center;">
-  <div style="text-align: center;">
-    <img src="drowsy.png" width="300" alt="Drowsy">
-    <p>Drowsy</p>
-  </div>
-  <div style="text-align: center;">
-    <img src="non-drowsy.png" width="300" alt="Non Drowsy">
-    <p>Non Drowsy</p>
-  </div>
-</div>
+| Drowsy | Non Drowsy |
+|--------|------------|
+| ![Drowsy](drowsy.png) | ![Non Drowsy](non-drowsy.png) |
 
 ### 2. Interface visuelle
 
 - **Rectangle bleu** autour du visage détecté  
 - **Rectangle vert** autour des yeux  
 - **Label rouge** indiquant l’état de vigilance (`Drowsy` ou `Non Drowsy`) et la probabilité  
-<div style="text-align: center;">
-    <img src="result.png" width="300" alt="Drowsy">
-    <p>Drowsy</p>
-  </div>
+![result](result.png)
 
