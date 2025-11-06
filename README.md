@@ -110,7 +110,7 @@ Le modèle utilise InceptionV3 comme extracteur de caractéristiques. Les couche
 ## 6. Résultats – Détection en temps réel
 Le système permet de détecter la somnolence **en temps réel** à partir d’une webcam grâce à la combinaison de la détection de visage/yeux avec OpenCV et du modèle CNN entraîné.
 
-### 7. Fonctionnement
+### 1. Fonctionnement
 
 - La webcam capture l’image du visage en continu.  
 - Les **Haar Cascades** détectent les **visages et les yeux**.  
@@ -126,7 +126,7 @@ Le système permet de détecter la somnolence **en temps réel** à partir d’u
 |--------|------------|
 | ![Drowsy](drowsy.png) | ![Non Drowsy](non-drowsy.png) |
 
-### 8. Interface visuelle
+### 2. Interface visuelle
 
 - **Rectangle bleu** autour du visage détecté  
 - **Rectangle vert** autour des yeux  
