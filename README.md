@@ -82,27 +82,35 @@ Permettent de :
 ## 4. Architecture du modèle
 Le modèle utilise **InceptionV3 pré-entraîné** comme base, auquel on ajoute des couches personnalisées pour la classification binaire (Drowsy / Non Drowsy).
 
-| Bloc | Couche | Paramètres | Dimension de sortie | Fonction |
-|------|--------|------------|------------------|----------|
-| **Base CNN** | InceptionV3 (include_top=False) | Poids pré-entraînés sur ImageNet | 8x8x2048 (exemple) | Extraction de caractéristiques complexes (textures, motifs, formes) |
-| **Bloc 1** | GlobalAveragePooling2D | - | 2048 | Convertit la sortie 4D en vecteur 1D pour les couches fully connected |
-| **Bloc 2** | Dense | 128 unités, activation ReLU | 128 | Apprentissage des caractéristiques spécifiques à la somnolence |
-| **Bloc 3** | Dropout | 0.5 | 128 | Régularisation pour réduire le surapprentissage |
-| **Bloc 4** | Dense | 64 unités, activation ReLU | 64 | Extraction de représentations plus fines |
-| **Bloc 5** | Dropout | 0.5 | 64 | Régularisation supplémentaire |
-| **Bloc 6 (Sortie)** | Dense | 1 unité, activation Sigmoid | 1 | Classification binaire : Drowsy / Non Drowsy |
+## Architecture du modèle Driver Drowsiness Detection
 
-### Points importants
-- Les couches de la base **InceptionV3 sont gelées** pendant l’entraînement initial.  
-- La sortie Sigmoid renvoie une **probabilité entre 0 et 1** pour la classe `Drowsy`.  
-- Cette architecture combine **feature extraction puissante** (InceptionV3) et **apprentissage spécifique** (couches denses + dropout).
+Le modèle utilise **InceptionV3 pré-entraîné sur ImageNet** comme extracteur de caractéristiques et ajoute des couches fully connected pour la classification binaire (Drowsy / Non Drowsy).
+
+| Couche / Bloc | Sortie (output shape) | Paramètres | Description |
+|---------------|--------------------|------------|------------|
+| **Input Layer** | `(None, 299, 299, 3)` | 0 | Images RGB de taille 299×299 |
+| **InceptionV3 Base (pretrained)** | `(None, 8, 8, 2048)` | 21,802,784 (non entraînables) | Réseau pré-entraîné sur ImageNet, toutes les couches gelées (`trainable=False`) |
+| **GlobalAveragePooling2D** | `(None, 2048)` | 0 | Réduit chaque carte de caractéristiques 8×8 en un vecteur de 2048 valeurs par moyenne globale |
+| **Dense (Fully Connected)** | `(None, 128)` | 262,272 | Couche entièrement connectée avec 128 neurones et activation ReLU |
+| **Dropout** | `(None, 128)` | 0 | Régularisation pour éviter le sur-apprentissage, taux = 0.4 |
+| **Dense (Fully Connected)** | `(None, 64)` | 8,256 | Couche entièrement connectée avec 64 neurones et activation ReLU |
+| **Dropout** | `(None, 64)` | 0 | Régularisation, taux = 0.3 |
+| **Dense (Output)** | `(None, 1)` | 65 | Couche de sortie pour classification binaire avec activation Sigmoid |
+
+**Résumé général :**
+- **Total de paramètres :** ~22 millions  
+- **Paramètres entraînables :** ~270 593 (couches ajoutées)  
+- **Paramètres non entraînables :** 21 802 784 (InceptionV3 pré-entraîné)  
+
+**Explication :**  
+Le modèle utilise InceptionV3 comme extracteur de caractéristiques. Les couches pré-entraînées sont gelées pour conserver les connaissances acquises sur ImageNet. Ensuite, un `GlobalAveragePooling2D` réduit les dimensions et deux couches `Dense` avec `Dropout` apprennent la classification binaire Drowsy / Non Drowsy. La sortie est une couche sigmoïde donnant la probabilité d’endormissement.
 
 ---
 
 ## 6. Résultats – Détection en temps réel
 Le système permet de détecter la somnolence **en temps réel** à partir d’une webcam grâce à la combinaison de la détection de visage/yeux avec OpenCV et du modèle CNN entraîné.
 
-### 1. Fonctionnement
+### 7. Fonctionnement
 
 - La webcam capture l’image du visage en continu.  
 - Les **Haar Cascades** détectent les **visages et les yeux**.  
@@ -118,7 +126,7 @@ Le système permet de détecter la somnolence **en temps réel** à partir d’u
 |--------|------------|
 | ![Drowsy](drowsy.png) | ![Non Drowsy](non-drowsy.png) |
 
-### 2. Interface visuelle
+### 8. Interface visuelle
 
 - **Rectangle bleu** autour du visage détecté  
 - **Rectangle vert** autour des yeux  
